@@ -85,7 +85,8 @@
       case TOGGLE_TODO : 
         return state.map((todo) => todo.id !== action.id ? todo :
         Object.assign({}, todo, { complete: !todo.complete }))
-      default: return state
+      default: 
+        return state
     }
   }
 
@@ -93,11 +94,21 @@
     switch(action.type) {
       case ADD_GOAL :
         return state.concat([action.goal])
-      case RECEIVE_DATA: 
+      case RECEIVE_DATA : 
         return action.goals
       case REMOVE_GOAL : 
         return state.filter((goal) => goal.id !== goal.id)
-      default: return state
+      default: 
+        return state
+    }
+  }
+
+  function loading (state = true, action) {
+    switch(action.type) {
+      case RECEIVE_DATA :
+        return false
+      default: 
+        return state
     }
   }
 
@@ -132,6 +143,7 @@
   const store = Redux.createStore(Redux.combineReducers({
     todos,
     goals,
+    loading
   }), Redux.applyMiddleware(checker, logger))
 
   </script>
@@ -243,7 +255,12 @@
       }
       render() {
         const { store } = this.props
-        const { todos, goals } = store.getState()
+        const { todos, goals, loading } = store.getState()
+
+        if (loading === true) {
+          return <h3>Loading...</h3>
+        }
+
         return (
           <div>
             <Todos todos={todos} store={this.props.store} />
